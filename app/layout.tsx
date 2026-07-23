@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "头晕头痛专病门诊 · 预诊问卷",
   description: "浙江省人民医院神经内科头晕头痛专病门诊预诊评估",
   icons: {
-    icon: "/favicon.svg",
+    icon: `${basePath}/favicon.svg`,
   },
   openGraph: {
     title: "头晕头痛专病门诊 · 预诊问卷",

@@ -189,13 +189,21 @@ export default function Home() {
 
     setSubmitting(true);
     try {
-      const response = await fetch("/api/submissions", {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      if (!supabaseUrl || !supabaseAnonKey) throw new Error("问卷服务尚未配置，请稍后重试");
+
+      const response = await fetch(`${supabaseUrl}/rest/v1/rpc/submit_questionnaire`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(form),
+        headers: {
+          "content-type": "application/json",
+          apikey: supabaseAnonKey,
+          authorization: `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({ input: form }),
       });
-      const data = (await response.json()) as Result & { error?: string };
-      if (!response.ok) throw new Error(data.error || "提交失败，请稍后重试");
+      const data = (await response.json()) as Result & { error?: string; message?: string };
+      if (!response.ok) throw new Error(data.error || data.message || "提交失败，请稍后重试");
       setResult(data);
       setStep(7);
       window.scrollTo({ top: 0, behavior: "smooth" });

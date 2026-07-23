@@ -13,21 +13,26 @@ test("defines the neurology pre-visit questionnaire experience", async () => {
   assert.match(page, /基本信息/);
   assert.match(page, /预计用时约 3 分钟/);
   assert.match(page, /信息将加密提交/);
-  assert.match(page, /fetch\("\/api\/submissions"/);
+  assert.match(page, /rest\/v1\/rpc\/submit_questionnaire/);
   assert.doesNotMatch(page + layout, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
-test("declares the Supabase-backed submission surface", async () => {
-  const [environment, route, client, migration] = await Promise.all([
+test("declares the GitHub Pages and Supabase RPC submission surface", async () => {
+  const [environment, config, workflow, migration, rpc] = await Promise.all([
     readFile(new URL("../.env.example", import.meta.url), "utf8"),
-    readFile(new URL("../app/api/submissions/route.ts", import.meta.url), "utf8"),
-    readFile(new URL("../lib/supabase-admin.ts", import.meta.url), "utf8"),
+    readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
+    readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
     readFile(new URL("../supabase/migrations/001_create_questionnaire_submissions.sql", import.meta.url), "utf8"),
+    readFile(new URL("../supabase/migrations/002_submit_questionnaire_rpc.sql", import.meta.url), "utf8"),
   ]);
 
-  assert.match(environment, /SUPABASE_SECRET_KEY/);
-  assert.match(route, /getSupabaseAdmin/);
-  assert.match(client, /createClient/);
+  assert.match(environment, /NEXT_PUBLIC_SUPABASE_ANON_KEY/);
+  assert.match(config, /output: "export"/);
+  assert.match(config, /neuro-previsit-questionnaire/);
+  assert.match(workflow, /actions\/deploy-pages/);
   assert.match(migration, /enable row level security/);
+  assert.match(rpc, /security definer/);
+  assert.match(rpc, /grant execute.*anon/);
   await access(new URL("../supabase/migrations/001_create_questionnaire_submissions.sql", import.meta.url));
+  await access(new URL("../supabase/migrations/002_submit_questionnaire_rpc.sql", import.meta.url));
 });
