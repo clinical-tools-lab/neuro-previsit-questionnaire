@@ -17,15 +17,17 @@ test("defines the neurology pre-visit questionnaire experience", async () => {
   assert.doesNotMatch(page + layout, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
-test("declares the database-backed submission surface", async () => {
-  const [hosting, route, schema] = await Promise.all([
-    readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
+test("declares the Supabase-backed submission surface", async () => {
+  const [environment, route, client, migration] = await Promise.all([
+    readFile(new URL("../.env.example", import.meta.url), "utf8"),
     readFile(new URL("../app/api/submissions/route.ts", import.meta.url), "utf8"),
-    readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/supabase-admin.ts", import.meta.url), "utf8"),
+    readFile(new URL("../supabase/migrations/001_create_questionnaire_submissions.sql", import.meta.url), "utf8"),
   ]);
 
-  assert.match(hosting, /"d1": "DB"/);
-  assert.match(route, /questionnaireSubmissions/);
-  assert.match(schema, /questionnaire_submissions/);
-  await access(new URL("../drizzle/0000_small_fantastic_four.sql", import.meta.url));
+  assert.match(environment, /SUPABASE_SECRET_KEY/);
+  assert.match(route, /getSupabaseAdmin/);
+  assert.match(client, /createClient/);
+  assert.match(migration, /enable row level security/);
+  await access(new URL("../supabase/migrations/001_create_questionnaire_submissions.sql", import.meta.url));
 });

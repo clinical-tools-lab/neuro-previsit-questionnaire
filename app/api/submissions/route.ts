@@ -1,6 +1,4 @@
-import { env } from "cloudflare:workers";
-import { questionnaireSubmissions } from "../../../db/schema";
-import { getDb } from "../../../db";
+import { getSupabaseAdmin } from "../../../lib/supabase-admin";
 
 type Submission = {
   name: string;
@@ -93,25 +91,6 @@ function isValid(input: Submission) {
   );
 }
 
-async function ensureSchema() {
-  await env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS questionnaire_submissions (
-      id TEXT PRIMARY KEY NOT NULL,
-      created_at TEXT NOT NULL,
-      name TEXT NOT NULL,
-      gender TEXT NOT NULL,
-      age INTEGER NOT NULL,
-      visit_type TEXT NOT NULL,
-      course TEXT NOT NULL,
-      answers_json TEXT NOT NULL,
-      total_score INTEGER NOT NULL,
-      level TEXT NOT NULL,
-      tags_json TEXT NOT NULL
-    )
-  `).run();
-  await env.DB.prepare("CREATE INDEX IF NOT EXISTS questionnaire_created_at_idx ON questionnaire_submissions (created_at)").run();
-}
-
 export async function POST(request: Request) {
   try {
     const input = await request.json() as Submission;
@@ -120,16 +99,16 @@ export async function POST(request: Request) {
     const result = assess(input);
     const id = crypto.randomUUID();
     const shortId = id.split("-")[0].toUpperCase();
-    await ensureSchema();
-    await getDb().insert(questionnaireSubmissions).values({
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase.from("questionnaire_submissions").insert({
       id,
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
       name: input.name.trim().slice(0, 40),
       gender: input.gender,
       age: Number(input.age),
-      visitType: input.visitType,
+      visit_type: input.visitType,
       course: input.course,
-      answersJson: JSON.stringify({
+      answers: {
         symptoms: input.symptoms,
         symptomOther: input.symptomOther.trim().slice(0, 200),
         impact: input.impact,
@@ -137,11 +116,12 @@ export async function POST(request: Request) {
         duration: input.duration,
         conditions: input.conditions,
         preferences: input.preferences,
-      }),
-      totalScore: result.total,
+      },
+      total_score: result.total,
       level: result.level,
-      tagsJson: JSON.stringify(result.tags),
+      tags: result.tags,
     });
+    if (error) throw new Error(`Supabase insert failed: ${error.message}`);
 
     return Response.json({ submissionId: shortId, ...result });
   } catch (error) {
