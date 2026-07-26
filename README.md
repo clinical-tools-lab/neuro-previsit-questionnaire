@@ -1,37 +1,85 @@
-# 头晕头痛专病门诊预诊问卷
+# 头晕头痛专病门诊 · 预诊问卷
 
-面向浙江省人民医院神经内科头晕头痛专病门诊的问卷原型。患者可分步填写症状、生活影响、发作情况与治疗意愿；提交后由 Supabase PostgreSQL RPC 在服务端校验、生成 V-DAS-6 预诊评估并持久保存记录。
+浙江省人民医院神经内科预诊评估工具，供患者在头晕头痛专病门诊就诊前填写，辅助医生进行病情分级与诊后套餐推荐。
 
-> 非浙江省人民医院官方项目，仅用于产品原型开发与测试。
+## 技术栈
 
-## 本地开发
+| 类别 | 技术 |
+|---|---|
+| 框架 | Next.js 16 (React 19) · TypeScript · Tailwind CSS 4 |
+| 输出 | 静态导出 → GitHub Pages |
+| 后端 | Supabase PostgreSQL · PL/pgSQL RPC |
+| 二维码 | `qrcode` 客户端生成 |
 
-需要 Node.js `>=22.13.0`。
+## 快速开始
 
 ```bash
 npm install
-npm run dev
+npm run dev       # http://localhost:3000
+npm run build     # 静态导出到 out/
+npm test          # Node.js 原生测试
 ```
 
-常用命令：
+## 环境变量
 
-- `npm run build`：生成可部署版本
-- `npm test`：构建并验证服务端渲染页面
+复制 `.env.example` → `.env.local`，填入 Supabase 项目凭证：
 
-## Supabase 配置
+```
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-1. 在 Supabase 创建项目，优先选择 Singapore 区域。
-2. 在 SQL Editor 依次运行 `supabase/migrations/001_create_questionnaire_submissions.sql` 和 `002_submit_questionnaire_rpc.sql`。
-3. 将 `.env.example` 复制为 `.env.local`，填写项目 URL 和公开的 anon key。
-4. 在 GitHub 仓库 Variables 中设置 `SUPABASE_URL` 和 `SUPABASE_ANON_KEY`。
+## 部署
 
-anon key 会随静态前端公开；数据访问由 RLS 和仅允许执行的 RPC 控制。Service Role Key 不得放入前端、GitHub Variables 或提交到 Git。
+推送到 `main` 分支后，GitHub Actions 自动构建并部署到 GitHub Pages。
 
-## 数据与安全
+### Supabase 迁移
 
-- `supabase/migrations/` 保存可审查的数据库迁移
-- `002_submit_questionnaire_rpc.sql` 定义仅允许匿名执行的受控提交函数
-- `.github/workflows/deploy-pages.yml` 构建并发布静态站点
-- 数据表启用 RLS，不给匿名或普通登录用户开放直接读写权限
+首次部署需在 Supabase SQL Editor 中执行迁移文件：
 
-当前版本仅用于产品验证。正式用于临床前，需要由医院完成隐私合规、权限、数据留存与医疗文案审核。本问卷结果只用于就诊前信息整理，不构成诊断或治疗建议。
+```
+supabase/migrations/003_reset_full_schema.sql
+```
+
+此文件会重建数据表和 RPC 函数。
+
+## 问卷结构
+
+共 8 步（基本信息 + 7 道题）：
+
+1. **基本信息** — 姓名、性别、年龄、就诊类型、病程
+2. **症状评估** — 9 项症状多选 + 其他
+3. **生活影响** — 4 级单选
+4. **发作频率** — 5 级单选
+5. **合并症** — 7 项多选
+6. **特殊人群** — 8 项多选
+7. **治疗方式** — 药物/非药物单选
+8. **复诊方式** — 3 选 1
+
+## 推荐引擎
+
+提交后根据 **R1-R7**（影响×频率）、**U1-U8**（升级规则）、**D1-D3**（降级规则）自动匹配三档套餐：
+
+| 套餐 | 名称 | 价格 |
+|---|---|---|
+| 套餐一 | 互联网专病团队咨询 | 25元/次 |
+| 套餐二 | 生活调理包 | 150元/30天 / 390元/90天 |
+| 套餐三 | 专病管理包 | 500元/30天 |
+
+## 项目结构
+
+```
+app/
+├── page.tsx          # 主页（问卷 + 结果）
+├── preview/page.tsx  # 三类套餐预览对比
+├── layout.tsx        # 布局 + SEO 元数据
+└── globals.css       # 全局样式
+lib/
+└── recommendation.ts # 推荐引擎（类型 + 规则）
+supabase/migrations/  # 数据库迁移
+tests/                # 测试
+```
+
+## 预览
+
+`/preview` 页面展示三种推荐结果并排对比，用于设计审查。
