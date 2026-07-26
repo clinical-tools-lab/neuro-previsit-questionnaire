@@ -161,6 +161,112 @@ button { -webkit-tap-highlight-color: transparent; }
 .medicalNotice p { margin: 0; color: #775d39; font-size: 12px; line-height: 1.7; }
 .restartButton { width: 100%; margin-top: 14px; }
 
+.resultHeroRec { padding: 34px 20px; }
+.recBadge {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 7px 18px;
+  color: #fff;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.recPrice { margin: 8px 0 0; font-size: 16px; opacity: .82; }
+
+.recCopy { margin-top: 14px; }
+.recCopy p { margin: 0; color: #3a4a54; font-size: 13px; line-height: 1.85; }
+
+.recVariants { margin-top: 14px; }
+.recVariants h3 { margin: 0 0 14px; font-size: 14px; }
+.recVariants p {
+  margin: 0 0 12px;
+  padding-left: 14px;
+  border-left: 3px solid var(--mint);
+  color: #4f5d67;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.recVariants p:last-child { margin-bottom: 0; }
+
+.recTags { margin-top: 14px; }
+.recTags h3 { margin: 0 0 14px; font-size: 14px; }
+
+.recArchive { margin-top: 18px; text-align: center; color: var(--muted); font-size: 11px; }
+
+.noPackageCard { text-align: center; padding: 38px 20px; }
+.noPackageCard h2 { margin: 10px 0 16px; font-family: "Songti SC", serif; font-size: 24px; }
+.noPackageCopy { color: #4f5d67; font-size: 13px; line-height: 1.85; }
+
+.doctorSchedule { margin-top: 14px; }
+.doctorSchedule h3 { margin: 0 0 14px; font-size: 14px; }
+.scheduleTable { display: grid; gap: 8px; }
+.scheduleTable div { display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid #edf0f1; font-size: 13px; }
+.scheduleTable div:last-child { border: 0; }
+.scheduleTable span:last-child { color: var(--muted); }
+.scheduleNote { margin: 14px 0 0; color: #87939b; font-size: 11px; line-height: 1.7; }
+
+.qrSection { margin-top: 14px; }
+.qrSection h3 { margin: 0 0 18px; font-size: 14px; }
+.qrGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+.qrCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 12px 14px;
+  background: #fbfcfc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
+  transition: border-color .2s, box-shadow .2s;
+}
+.qrCard:hover { border-color: #8aafb2; box-shadow: 0 4px 16px rgba(21,55,63,.08); }
+.qrCardRecommended { border-color: var(--brand); background: #f0f9f7; box-shadow: 0 4px 16px rgba(7,95,103,.1); }
+
+.qrBadge {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 10px;
+  color: #fff;
+  background: var(--coral);
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+.qrImageWrap {
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 1px solid #e8edee;
+  border-radius: 10px;
+  padding: 6px;
+}
+.qrImage { width: 100%; height: 100%; }
+.qrPlaceholder { width: 100%; height: 100%; background: #e8edee; border-radius: 6px; animation: qrPulse 1.5s ease infinite; }
+@keyframes qrPulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+
+.qrInfo { display: grid; gap: 3px; }
+.qrInfo strong { font-size: 13px; font-weight: 700; }
+.qrInfo span { color: var(--muted); font-size: 11px; white-space: pre-line; }
+.qrInfo small { color: var(--brand); font-size: 10px; font-weight: 650; }
+
+.previewBlock { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 2px dashed var(--line); }
+.previewBlock:last-child { border-bottom: 0; }
+.previewTitle { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.previewLabel { color: var(--muted); font-size: 14px; }
+
 footer { padding: 26px 16px; text-align: center; color: #87939b; font-size: 11px; }
 
 @media (max-width: 600px) {
@@ -168,7 +274,7 @@ footer { padding: 26px 16px; text-align: center; color: #87939b; font-size: 11px
   .securePill { display: none; }
   .content { width: calc(100% - 24px); padding-top: 24px; }
   .progressBlock { margin-bottom: 28px; }
-  .formGrid, .preferenceGrid, .resultGrid { grid-template-columns: 1fr; }
+  .formGrid, .preferenceGrid, .resultGrid, .qrGrid { grid-template-columns: 1fr; }
   .fieldWide { grid-column: auto; }
   .navigation { position: sticky; bottom: 10px; z-index: 3; padding: 8px; background: rgba(243,247,248,.86); border-radius: 16px; backdrop-filter: blur(12px); }
 }
