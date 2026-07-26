@@ -585,19 +585,16 @@ export default function Home() {
                 <section className="resultCard qrSection">
                   <h3>扫码购买服务包</h3>
                   <div className="qrGrid">
-                    {[
-                      { idx: 1, name: "互联网医院咨询", price: "25元/次" },
-                      { idx: 2, name: "生活调理包", price: "150元/30天 · 390元/90天" },
-                      { idx: 3, name: "专病管理包", price: "500元/30天" },
-                    ].map((pkg) => (
-                      <QRCodeCard
-                        key={pkg.idx}
-                        url={packageQRUrls[pkg.idx]}
-                        name={pkg.name}
-                        price={pkg.price}
-                        recommended={result.recommendation.package === `套餐${["一", "二", "三"][pkg.idx - 1]}`}
-                      />
-                    ))}
+                    <QRCodeCard
+                      url={packageQRUrls[
+                        result.recommendation.package === "套餐一" ? 1
+                        : result.recommendation.package === "套餐二" ? 2
+                        : 3
+                      ]}
+                      name={result.recommendation.packageName}
+                      price={result.recommendation.price}
+                      recommended
+                    />
                   </div>
                 </section>
               </>
@@ -628,12 +625,6 @@ export default function Home() {
               </p>
             </section>
 
-            <div className="medicalNotice">
-              <strong>重要提示</strong>
-              <p>
-                本结果仅用于门诊前信息整理与诊后管理方案推荐，不构成诊断或治疗建议。若出现突发剧烈头痛、意识障碍、肢体无力或言语不清，请立即就医。
-              </p>
-            </div>
             <button
               type="button"
               className="secondaryButton restartButton"
