@@ -293,8 +293,8 @@ export default function Home() {
       <header className="topbar">
         <div className="brandMark" aria-hidden="true">浙</div>
         <div className="brandText">
-          <h1>头晕头痛专病门诊</h1>
-          <p>浙江省人民医院 · 神经内科预诊问卷</p>
+          <h1>浙江省人民医院 · 神经内科</h1>
+          <p>头晕头痛专病门诊 预诊问卷</p>
         </div>
         <span className="securePill">隐私保护</span>
       </header>
@@ -635,7 +635,7 @@ export default function Home() {
           </section>
         ) : null}
       </section>
-      <footer>浙江省人民医院神经内科 · 头晕头痛专病门诊</footer>
+      <footer>浙江省人民医院 神经内科 · 头晕头痛专病门诊</footer>
     </main>
   );
 }

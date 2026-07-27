@@ -87,7 +87,7 @@ export default function Preview() {
         <div className="brandMark" aria-hidden="true">预</div>
         <div className="brandText">
           <h1>套餐推荐预览 · 三类结果对比</h1>
-          <p>基于 2026-07-26 新版问卷推荐引擎</p>
+          <p>浙江省人民医院 神经内科 · 头晕头痛专病门诊</p>
         </div>
       </header>
 
