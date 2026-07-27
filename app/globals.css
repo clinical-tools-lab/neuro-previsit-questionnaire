@@ -148,6 +148,25 @@ button { -webkit-tap-highlight-color: transparent; }
 .resultHero h2 { margin: 0; font-size: 22px; }
 .resultHero p { margin: 10px 0 0; font-size: 14px; opacity: .62; }
 
+.scoreHero { display: grid; gap: 6px; justify-items: center; padding: 44px 20px; }
+.scoreNumber { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -.04em; }
+.scoreLabel { font-size: 14px; opacity: .7; }
+.scoreGrade { margin-top: 6px; padding: 7px 20px; color: #fff; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); border-radius: 99px; font-size: 16px; font-weight: 700; }
+
+.scoreBreakdownCard { margin-top: 14px; }
+.scoreBreakdown { display: grid; gap: 12px; }
+.scoreItem { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #edf0f1; }
+.scoreItem:last-child { border: 0; padding-bottom: 0; }
+.scoreItemLabel { font-size: 15px; }
+.scoreItemValue { font-size: 17px; font-weight: 700; color: var(--brand); }
+.scoreItemValue small { margin-left: 2px; font-size: 12px; font-weight: 500; color: var(--muted); }
+
+.recHeader { text-align: center; margin-bottom: 16px; }
+.recHeader h2 { margin: 10px 0 4px; font-size: 22px; }
+.recBadgeInline { display: inline-block; padding: 6px 16px; color: #fff; background: var(--coral); border-radius: 99px; font-size: 14px; font-weight: 700; }
+
+.qrIntro { margin: -6px 0 18px; color: var(--muted); font-size: 14px; line-height: 1.65; }
+
 .resultCard { box-shadow: none; }
 .resultCard h3 { margin: 0 0 16px; font-size: 16px; }
 

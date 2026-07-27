@@ -23,6 +23,12 @@ export type Recommendation = {
   copy: string;
   variantCopy: string[];
   tags: string[];
+  score: {
+    total: number;
+    max: number;
+    grade: string;
+    dimensions: { label: string; value: number; max: number }[];
+  };
 };
 
 export type Result = {
@@ -89,6 +95,43 @@ export function computeRecommendation(form: FormState): Recommendation {
     tags.push("非药物治疗倾向");
   }
 
+  const symptomScore = Math.min(
+    form.symptoms.length + (form.symptomOther.trim() ? 1 : 0),
+    8,
+  );
+  const impactScore = Number(form.impact || 0);
+  const frequencyScore = Number(form.frequency || 0);
+  const conditionScore = form.conditions.filter((c) => c !== "以上均没有").length;
+  const specialScore = form.specialPopulations.filter(
+    (s) => s !== "以上都不符合",
+  ).length;
+
+  const dimensions = [
+    { label: "症状严重程度", value: symptomScore, max: 8 },
+    { label: "生活影响", value: impactScore, max: 3 },
+    { label: "发作频率", value: frequencyScore, max: 4 },
+    { label: "合并情况", value: conditionScore, max: 6 },
+    { label: "特殊人群", value: specialScore, max: 7 },
+  ];
+
+  const totalScore = dimensions.reduce((sum, d) => sum + d.value, 0);
+  const maxScore = dimensions.reduce((sum, d) => sum + d.max, 0);
+
+  function getGrade(score: number) {
+    if (score <= 8) return "低风险";
+    if (score <= 16) return "中风险";
+    if (score <= 24) return "高风险";
+    return "极高风险";
+  }
+  const grade = getGrade(totalScore);
+
+  const scoreBlock = {
+    total: totalScore,
+    max: maxScore,
+    grade,
+    dimensions,
+  };
+
   if (form.visitType === "预约复诊") {
     return {
       ruleLabel: "D1",
@@ -99,6 +142,7 @@ export function computeRecommendation(form: FormState): Recommendation {
       copy: "您已预约复诊，已有专病管理计划。请按预约时间就诊，由施天明主任团队进一步评估。",
       variantCopy: [],
       tags,
+      score: scoreBlock,
     };
   }
 
@@ -247,5 +291,6 @@ export function computeRecommendation(form: FormState): Recommendation {
     copy,
     variantCopy,
     tags,
+    score: scoreBlock,
   };
 }

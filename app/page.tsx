@@ -38,7 +38,7 @@ const symptoms = [
 const impact = [
   ["0", "完全不影响，该干嘛干嘛", ""],
   ["1", "有些力不从心，做事效率明显下降", ""],
-  ["2", "明显影响日常活动，需要休息或减少活动", ""],
+  ["2", "影响日常活动，需休息或减少活动", ""],
   ["3", "无法进行日常活动，需要卧床休息", ""],
 ];
 
@@ -54,9 +54,9 @@ const conditions = [
   ["心脑血管疾病", "高血压、糖尿病、高血脂、冠心病或中风"],
   ["吸烟/饮酒/咖啡", "有吸烟、饮酒或每天喝超过 2 杯咖啡"],
   ["失眠", "每周超过 3 天睡不好，病程超过 2 周"],
-  ["精神紧张或情绪低落", "精神紧张、担忧，或情绪低落、对什么都没兴趣（病程超过 2 周）"],
-  ["止晕药频繁", "止晕药每周服用超过 2 天（如异丙嗪、山莨菪碱、地芬尼多等）"],
-  ["止痛药频繁", "止痛药每周服用超过 2 天（如布洛芬、对乙酰氨基酚、曲普坦等）"],
+  ["精神紧张或情绪低落", "紧张担忧、情绪低落或兴趣缺失（病程超过2周）"],
+  ["止晕药频繁", "止晕药每周服用超过2天（异丙嗪、山莨菪碱、地芬尼多等）"],
+  ["止痛药频繁", "止痛药每周服用超过2天（布洛芬、散利痛、曲普坦等）"],
   ["以上均没有", ""],
 ];
 
@@ -65,7 +65,7 @@ const specialPopulations = [
   ["学生或正在备考", ""],
   ["工作需要高度用脑", "程序员、金融、科研等"],
   ["需要长时间驾驶", "职业司机或每天通勤超过 2 小时"],
-  ["经常上夜班或作息不规律", ""],
+  ["经常上夜班导致作息不规律", ""],
   ["正在备孕、怀孕或哺乳中", ""],
   ["常规吃药效果不太好", ""],
   ["以上都不符合", ""],
@@ -73,13 +73,13 @@ const specialPopulations = [
 
 const treatmentOptions = [
   ["药物治疗", "药物治疗头晕头痛"],
-  ["非药物治疗", "非药物治疗头晕头痛（如生活调理/康复理疗/心理治疗）"],
+  ["非药物治疗", "非药物方法治疗头晕头痛（生活调理、康复理疗、心理治疗等）"],
 ];
 
 const followUpOptions = [
-  ["专病门诊定期复诊", "专病门诊定期复诊，可以接受预约排队候诊"],
-  ["互联网平台复诊", "通过互联网平台复诊，居家就能获得医疗指导"],
-  ["均可接受", "两种复诊方式均可以接受"],
+  ["专病门诊定期复诊", "线下门诊（需要排队）"],
+  ["互联网平台复诊", "线上复诊（居家咨询）"],
+  ["均可接受", "均可接受"],
 ];
 
 const packageQRUrls = [
@@ -104,6 +104,17 @@ const stepMeta = [
 /*  Components                                                         */
 /* ------------------------------------------------------------------ */
 
+function splitParenNotes(text: string): { main: string; notes: string[] } {
+  const notes: string[] = [];
+  const main = text
+    .replace(/（[^）]*）/g, (match) => {
+      notes.push(match);
+      return "";
+    })
+    .trim();
+  return { main, notes };
+}
+
 function Choice({
   checked,
   title,
@@ -117,6 +128,7 @@ function Choice({
   multiple?: boolean;
   onChange: () => void;
 }) {
+  const { main, notes } = splitParenNotes(title);
   return (
     <button
       type="button"
@@ -126,7 +138,10 @@ function Choice({
     >
       <span className={multiple ? "choiceBox" : "choiceDot"} />
       <span>
-        <strong>{title}</strong>
+        <strong>{main}</strong>
+        {notes.map((note) => (
+          <small key={note}>{note}</small>
+        ))}
         {subtitle ? <small>{subtitle}</small> : null}
       </span>
     </button>
@@ -537,53 +552,80 @@ export default function Home() {
         ) : result ? (
           /* ---- Result ---- */
           <section className="resultPage">
+            <section className="resultHero scoreHero">
+              <span className="resultKicker">预诊评估已完成</span>
+              <div className="scoreNumber">
+                {result.recommendation.score.total}
+              </div>
+              <div className="scoreLabel">
+                综合评分 / {result.recommendation.score.max}
+              </div>
+              <div className="scoreGrade">
+                {result.recommendation.score.grade}
+              </div>
+            </section>
+
+            <section className="resultCard scoreBreakdownCard">
+              <h3>各维度评分</h3>
+              <div className="scoreBreakdown">
+                {result.recommendation.score.dimensions.map((d) => (
+                  <div key={d.label} className="scoreItem">
+                    <span className="scoreItemLabel">{d.label}</span>
+                    <span className="scoreItemValue">
+                      {d.value}
+                      <small>/{d.max}</small>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {result.recommendation.tags.length > 0 ? (
+              <section className="resultCard recTags">
+                <h3>评估标签</h3>
+                <div className="tags">
+                  {result.recommendation.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {result.recommendation.variantCopy.length > 0 ? (
+              <section className="resultCard recVariants">
+                <h3>个性化分析</h3>
+                {result.recommendation.variantCopy.map((text, idx) => (
+                  <p key={idx}>{text}</p>
+                ))}
+              </section>
+            ) : null}
+
             {result.recommendation.package === "不推荐" ? (
               <section className="resultCard noPackageCard">
-                <span className="resultKicker">预诊评估已完成</span>
-                <h2>已预约复诊</h2>
-                <p className="noPackageCopy">{result.recommendation.copy}</p>
+                <span className="resultKicker">已预约复诊</span>
+                <h2>无需重复推荐服务包</h2>
+                <p className="noPackageCopy">
+                  {result.recommendation.copy}
+                </p>
               </section>
             ) : (
               <>
-                <section className="resultHero resultHeroRec">
-                  <span className="resultKicker">预诊评估已完成</span>
-                  <div className="recBadge">
-                    {result.recommendation.package}
-                  </div>
-                  <h2>{result.recommendation.packageName}</h2>
-                  <p className="recPrice">{result.recommendation.price}</p>
-                </section>
-
                 <section className="resultCard recCopy">
+                  <div className="recHeader">
+                    <span className="recBadgeInline">
+                      {result.recommendation.package}
+                    </span>
+                    <h2>{result.recommendation.packageName}</h2>
+                    <p className="recPrice">{result.recommendation.price}</p>
+                  </div>
                   <p>{result.recommendation.copy}</p>
                 </section>
 
-                {result.recommendation.variantCopy.length > 0 ? (
-                  <section className="resultCard recVariants">
-                    <h3>个性化分析</h3>
-                    {result.recommendation.variantCopy.map((text, idx) => (
-                      <p key={idx}>{text}</p>
-                    ))}
-                  </section>
-                ) : null}
-
-                {result.recommendation.tags.length > 0 ? (
-                  <section className="resultCard recTags">
-                    <h3>评估标签</h3>
-                    <div className="tags">
-                      {result.recommendation.tags.map((tag) => (
-                        <span key={tag}>{tag}</span>
-                      ))}
-                    </div>
-                  </section>
-                ) : null}
-
-                {result.submissionId ? (
-                  <p className="recArchive">档案编号：{result.submissionId}</p>
-                ) : null}
-
                 <section className="resultCard qrSection">
-                  <h3>扫码购买服务包</h3>
+                  <h3>推荐诊后随访模式</h3>
+                  <p className="qrIntro">
+                    根据问卷评估结果，推荐以下随访方案。可扫码购买服务包，或先咨询医生后开通服务。
+                  </p>
                   <div className="qrGrid">
                     <QRCodeCard
                       url={packageQRUrls[
@@ -600,28 +642,28 @@ export default function Home() {
               </>
             )}
 
+            {result.submissionId ? (
+              <p className="recArchive">档案编号：{result.submissionId}</p>
+            ) : null}
+
             <section className="resultCard doctorSchedule">
-              <h3>出诊时间</h3>
+              <h3>施天明主任及专病团队出诊时间</h3>
               <div className="scheduleTable">
                 <div>
                   <span>周一上午</span>
-                  <span>越城院区</span>
+                  <span>越城院区（精英门诊）</span>
                 </div>
                 <div>
-                  <span>周二上午</span>
-                  <span>朝晖院区（精英门诊）</span>
-                </div>
-                <div>
-                  <span>周三下午</span>
-                  <span>朝晖院区（精英门诊）</span>
+                  <span>周二下午</span>
+                  <span>朝晖院区（专病门诊）</span>
                 </div>
                 <div>
                   <span>周五上午</span>
-                  <span>越城院区（专家门诊）</span>
+                  <span>朝晖院区（专病门诊）</span>
                 </div>
               </div>
               <p className="scheduleNote">
-                施天明主任门诊时间 · 线上服务包不受院区限制，由团队医师开通后可随时使用。
+                线上服务包不受院区限制，由团队医师开通后可随时使用。
               </p>
             </section>
 
