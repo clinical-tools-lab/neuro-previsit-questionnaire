@@ -654,8 +654,16 @@ export default function Home() {
                   <span>越城院区（精英门诊）</span>
                 </div>
                 <div>
+                  <span>周二上午</span>
+                  <span>朝晖院区（精英门诊）</span>
+                </div>
+                <div>
                   <span>周二下午</span>
                   <span>朝晖院区（专病门诊）</span>
+                </div>
+                <div>
+                  <span>周三下午</span>
+                  <span>朝晖院区（精英门诊）</span>
                 </div>
                 <div>
                   <span>周五上午</span>
