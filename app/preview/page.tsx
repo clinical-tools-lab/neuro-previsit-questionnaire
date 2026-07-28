@@ -54,10 +54,10 @@ const mockRecommendations: { label: string; rec: Recommendation }[] = [
       symptomOther: "",
       impact: "1",
       frequency: "2",
-      conditions: ["失眠"],
+      conditions: ["睡眠问题"],
       specialPopulations: ["以上都不符合"],
       treatmentPreference: "非药物治疗",
-      followUpPreference: "互联网平台复诊",
+      followUpPreference: "线上复诊",
     }),
   },
   {
@@ -72,10 +72,10 @@ const mockRecommendations: { label: string; rec: Recommendation }[] = [
       symptomOther: "",
       impact: "2",
       frequency: "3",
-      conditions: ["心脑血管疾病", "失眠"],
+      conditions: ["心脑血管疾病", "睡眠问题"],
       specialPopulations: ["需要长时间驾驶"],
       treatmentPreference: "药物治疗",
-      followUpPreference: "互联网平台复诊",
+      followUpPreference: "线上复诊",
     }),
   },
 ];
@@ -131,7 +131,7 @@ export default function Preview() {
               ) : null}
 
               <section className="resultCard qrSection">
-                <h3>扫码购买服务包</h3>
+                <h3>开通诊后服务</h3>
                 <div className="qrGrid">
                   {[
                     { idx: 1, name: "互联网医院咨询", price: "25元/次" },

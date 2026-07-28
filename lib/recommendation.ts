@@ -56,7 +56,7 @@ export function computeRecommendation(form: FormState): Recommendation {
     tags.push("梅尼埃病");
   }
 
-  if (form.conditions.includes("失眠")) {
+  if (form.conditions.includes("睡眠问题")) {
     tags.push("睡眠障碍");
   }
 
@@ -64,11 +64,11 @@ export function computeRecommendation(form: FormState): Recommendation {
     tags.push("情绪问题");
   }
 
-  if (form.conditions.includes("心脑血管疾病") || form.conditions.includes("吸烟/饮酒/咖啡")) {
+  if (form.conditions.includes("心脑血管疾病") || form.conditions.includes("过量吸烟、饮酒或咖啡因")) {
     tags.push("高危共病或嗜好人群");
   }
 
-  if (form.conditions.includes("止痛药频繁") || form.conditions.includes("止晕药频繁")) {
+  if (form.conditions.includes("止痛药每周服用超过2天") || form.conditions.includes("止晕药每周服用超过2天")) {
     tags.push("药物过度使用");
   }
 
@@ -80,10 +80,10 @@ export function computeRecommendation(form: FormState): Recommendation {
   }
 
   if (
-    form.specialPopulations.includes("学生或正在备考") ||
+    form.specialPopulations.includes("学生或正在备考的成人") ||
     form.specialPopulations.includes("工作需要高度用脑") ||
     form.specialPopulations.includes("需要长时间驾驶") ||
-    form.specialPopulations.includes("经常上夜班或作息不规律")
+    form.specialPopulations.includes("经常上夜班导致作息不规律")
   ) {
     tags.push("高危职业人群");
   }
@@ -95,16 +95,11 @@ export function computeRecommendation(form: FormState): Recommendation {
     tags.push("非药物治疗倾向");
   }
 
-  const symptomScore = Math.min(
-    form.symptoms.length + (form.symptomOther.trim() ? 1 : 0),
-    8,
-  );
+  const symptomScore = Math.min(form.symptoms.length + (form.symptomOther.trim() ? 1 : 0), 8);
   const impactScore = Number(form.impact || 0);
   const frequencyScore = Number(form.frequency || 0);
   const conditionScore = form.conditions.filter((c) => c !== "以上均没有").length;
-  const specialScore = form.specialPopulations.filter(
-    (s) => s !== "以上都不符合",
-  ).length;
+  const specialScore = form.specialPopulations.filter((s) => s !== "以上都不符合").length;
 
   const dimensions = [
     { label: "症状严重程度", value: symptomScore, max: 8 },
@@ -123,14 +118,9 @@ export function computeRecommendation(form: FormState): Recommendation {
     if (score <= 24) return "高风险";
     return "极高风险";
   }
-  const grade = getGrade(totalScore);
 
-  const scoreBlock = {
-    total: totalScore,
-    max: maxScore,
-    grade,
-    dimensions,
-  };
+  const grade = getGrade(totalScore);
+  const score = { total: totalScore, max: maxScore, grade, dimensions };
 
   if (form.visitType === "预约复诊") {
     return {
@@ -142,7 +132,7 @@ export function computeRecommendation(form: FormState): Recommendation {
       copy: "您已预约复诊，已有专病管理计划。请按预约时间就诊，由施天明主任团队进一步评估。",
       variantCopy: [],
       tags,
-      score: scoreBlock,
+      score,
     };
   }
 
@@ -185,19 +175,19 @@ export function computeRecommendation(form: FormState): Recommendation {
   const uRules: string[] = [];
 
   if (form.course === "是") uRules.push("U1");
-  if (form.conditions.includes("心脑血管疾病") || form.conditions.includes("吸烟/饮酒/咖啡"))
+  if (form.conditions.includes("心脑血管疾病") || form.conditions.includes("过量吸烟、饮酒或咖啡因"))
     uRules.push("U2");
-  if (form.conditions.includes("止痛药频繁") || form.conditions.includes("止晕药频繁"))
+  if (form.conditions.includes("止痛药每周服用超过2天") || form.conditions.includes("止晕药每周服用超过2天"))
     uRules.push("U3");
   if (form.specialPopulations.includes("正在备孕、怀孕或哺乳中")) uRules.push("U4");
   if (form.specialPopulations.includes("14岁及以下")) uRules.push("U5");
   if (
-    form.specialPopulations.includes("学生或正在备考") ||
+    form.specialPopulations.includes("学生或正在备考的成人") ||
     form.specialPopulations.includes("工作需要高度用脑") ||
     form.specialPopulations.includes("需要长时间驾驶")
   )
     uRules.push("U6");
-  if (form.specialPopulations.includes("经常上夜班或作息不规律")) uRules.push("U7");
+  if (form.specialPopulations.includes("经常上夜班导致作息不规律")) uRules.push("U7");
   if (form.specialPopulations.includes("常规吃药效果不太好")) uRules.push("U8");
 
   let finalPackage = basePackage;
@@ -208,7 +198,7 @@ export function computeRecommendation(form: FormState): Recommendation {
 
   if (
     uRules.length === 0 &&
-    form.followUpPreference === "专病门诊定期复诊"
+    form.followUpPreference === "线下门诊"
   ) {
     finalPackage = 1;
   }
@@ -291,6 +281,6 @@ export function computeRecommendation(form: FormState): Recommendation {
     copy,
     variantCopy,
     tags,
-    score: scoreBlock,
+    score,
   };
 }

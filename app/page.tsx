@@ -30,9 +30,9 @@ const symptoms = [
   ["头痛", ""],
   ["头昏胀", "头部胀满感、头脑不清醒"],
   ["恶心或呕吐", ""],
-  ["耳鸣/耳闷/听力下降", "耳鸣、耳闷或听力下降"],
+  ["耳鸣/耳闷/听力下降", ""],
   ["怕光或怕吵", ""],
-  ["眼前闪光/视物模糊", "眼前闪光、视物模糊"],
+  ["眼前闪光/视物模糊", ""],
 ];
 
 const impact = [
@@ -51,18 +51,18 @@ const frequency = [
 ];
 
 const conditions = [
-  ["心脑血管疾病", "高血压、糖尿病、高血脂、冠心病或中风"],
-  ["吸烟/饮酒/咖啡", "有吸烟、饮酒或每天喝超过 2 杯咖啡"],
-  ["失眠", "每周超过 3 天睡不好，病程超过 2 周"],
+  ["心脑血管疾病", "三高症（血压/血糖/血脂）、冠心病、中风"],
+  ["过量吸烟、饮酒或咖啡因", "烟超过5支/天，酒超过25g/天，咖啡超过2杯/天"],
+  ["睡眠问题", "每周超过 3 天睡不好，病程超过 2 周"],
   ["精神紧张或情绪低落", "紧张担忧、情绪低落或兴趣缺失（病程超过2周）"],
-  ["止晕药频繁", "止晕药每周服用超过2天（异丙嗪、山莨菪碱、地芬尼多等）"],
-  ["止痛药频繁", "止痛药每周服用超过2天（布洛芬、散利痛、曲普坦等）"],
+  ["止晕药每周服用超过2天", "异丙嗪、山莨菪碱、地芬尼多等"],
+  ["止痛药每周服用超过2天", "布洛芬、散利痛、曲普坦等"],
   ["以上均没有", ""],
 ];
 
 const specialPopulations = [
   ["14岁及以下", ""],
-  ["学生或正在备考", ""],
+  ["学生或正在备考的成人", ""],
   ["工作需要高度用脑", "程序员、金融、科研等"],
   ["需要长时间驾驶", "职业司机或每天通勤超过 2 小时"],
   ["经常上夜班导致作息不规律", ""],
@@ -73,13 +73,13 @@ const specialPopulations = [
 
 const treatmentOptions = [
   ["药物治疗", "药物治疗头晕头痛"],
-  ["非药物治疗", "非药物方法治疗头晕头痛（生活调理、康复理疗、心理治疗等）"],
+  ["非药物治疗", "非药物方法治疗头晕头痛", "生活调理、康复理疗、心理治疗等"],
 ];
 
 const followUpOptions = [
-  ["专病门诊定期复诊", "线下门诊"],
-  ["互联网平台复诊", "线上复诊"],
-  ["均可接受", "均可接受"],
+  ["线下门诊", "线下门诊", "需要排队"],
+  ["线上复诊", "线上复诊", "居家咨询"],
+  ["均可接受", "均可接受", ""],
 ];
 
 const packageQRUrls = [
@@ -104,17 +104,6 @@ const stepMeta = [
 /*  Components                                                         */
 /* ------------------------------------------------------------------ */
 
-function splitParenNotes(text: string): { main: string; notes: string[] } {
-  const notes: string[] = [];
-  const main = text
-    .replace(/（[^）]*）/g, (match) => {
-      notes.push(match);
-      return "";
-    })
-    .trim();
-  return { main, notes };
-}
-
 function Choice({
   checked,
   title,
@@ -128,7 +117,6 @@ function Choice({
   multiple?: boolean;
   onChange: () => void;
 }) {
-  const { main, notes } = splitParenNotes(title);
   return (
     <button
       type="button"
@@ -138,10 +126,7 @@ function Choice({
     >
       <span className={multiple ? "choiceBox" : "choiceDot"} />
       <span>
-        <strong>{main}</strong>
-        {notes.map((note) => (
-          <small key={note}>{note}</small>
-        ))}
+        <strong>{title}</strong>
         {subtitle ? <small>{subtitle}</small> : null}
       </span>
     </button>
@@ -491,11 +476,12 @@ export default function Home() {
               {/* Step 6: Q6 Treatment Preference */}
               {step === 6 ? (
                 <div className="choiceList">
-                  {treatmentOptions.map(([key, label]) => (
+                  {treatmentOptions.map(([key, title, subtitle]) => (
                     <Choice
                       key={key}
                       checked={form.treatmentPreference === key}
-                      title={label}
+                      title={title}
+                      subtitle={subtitle}
                       onChange={() => setField("treatmentPreference", key)}
                     />
                   ))}
@@ -505,11 +491,12 @@ export default function Home() {
               {/* Step 7: Q7 Follow-up Preference */}
               {step === 7 ? (
                 <div className="choiceList">
-                  {followUpOptions.map(([key, label]) => (
+                  {followUpOptions.map(([key, title, subtitle]) => (
                     <Choice
                       key={key}
                       checked={form.followUpPreference === key}
-                      title={label}
+                      title={title}
+                      subtitle={subtitle}
                       onChange={() => setField("followUpPreference", key)}
                     />
                   ))}
@@ -554,15 +541,9 @@ export default function Home() {
           <section className="resultPage">
             <section className="resultHero scoreHero">
               <span className="resultKicker">预诊评估已完成</span>
-              <div className="scoreNumber">
-                {result.recommendation.score.total}
-              </div>
-              <div className="scoreLabel">
-                综合评分 / {result.recommendation.score.max}
-              </div>
-              <div className="scoreGrade">
-                {result.recommendation.score.grade}
-              </div>
+              <div className="scoreNumber">{result.recommendation.score.total}</div>
+              <div className="scoreLabel">综合评分 / {result.recommendation.score.max}</div>
+              <div className="scoreGrade">{result.recommendation.score.grade}</div>
             </section>
 
             <section className="resultCard scoreBreakdownCard">
@@ -570,11 +551,13 @@ export default function Home() {
               <div className="scoreBreakdown">
                 {result.recommendation.score.dimensions.map((d) => (
                   <div key={d.label} className="scoreItem">
-                    <span className="scoreItemLabel">{d.label}</span>
-                    <span className="scoreItemValue">
-                      {d.value}
-                      <small>/{d.max}</small>
-                    </span>
+                    <div className="scoreItemHead">
+                      <span className="scoreItemLabel">{d.label}</span>
+                      <span className="scoreItemValue">{d.value}<small>/{d.max}</small></span>
+                    </div>
+                    <div className="scoreBar">
+                      <span className="scoreBarFill" style={{ width: `${Math.round((d.value / d.max) * 100)}%` }} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -602,26 +585,19 @@ export default function Home() {
 
             {result.recommendation.package === "不推荐" ? (
               <section className="resultCard noPackageCard">
-                <span className="resultKicker">已预约复诊</span>
-                <h2>无需重复推荐服务包</h2>
-                <p className="noPackageCopy">
-                  {result.recommendation.copy}
-                </p>
+                <span className="resultKicker">预诊评估已完成</span>
+                <h2>诊疗建议</h2>
+                <p className="noPackageCopy">{result.recommendation.copy}</p>
               </section>
             ) : (
               <>
-                <section className="resultCard recCopy">
-                  <div className="recHeader">
-                    <h2>诊疗建议</h2>
-                  </div>
+                <section className="resultCard">
+                  <h3>诊疗建议</h3>
                   <p>{result.recommendation.copy}</p>
                 </section>
-
                 <section className="resultCard qrSection">
-                  <h3>推荐诊后随访模式</h3>
-                  <p className="qrIntro">
-                    根据问卷评估结果，推荐以下随访方案。可扫码购买服务包，或先咨询医生后开通服务。
-                  </p>
+                  <h3>开通诊后服务</h3>
+                  <p className="qrSectionNote">可先扫码定制个体化诊后服务，经专病团队医生审核后开通服务。</p>
                   <div className="qrGrid">
                     <QRCodeCard
                       url={packageQRUrls[
@@ -645,30 +621,13 @@ export default function Home() {
             <section className="resultCard doctorSchedule">
               <h3>施天明主任及专病团队出诊时间</h3>
               <div className="scheduleTable">
-                <div>
-                  <span>周一上午</span>
-                  <span>越城院区（精英门诊）</span>
-                </div>
-                <div>
-                  <span>周二上午</span>
-                  <span>朝晖院区（精英门诊）</span>
-                </div>
-                <div>
-                  <span>周二下午</span>
-                  <span>朝晖院区（专病门诊）</span>
-                </div>
-                <div>
-                  <span>周三下午</span>
-                  <span>朝晖院区（精英门诊）</span>
-                </div>
-                <div>
-                  <span>周五上午</span>
-                  <span>朝晖院区（专病门诊）</span>
-                </div>
+                <div><span>周一上午</span><span>越城院区（精英门诊）</span></div>
+                <div><span>周二上午</span><span>朝晖院区（精英门诊）</span></div>
+                <div><span>周二下午</span><span>朝晖院区（专病门诊）</span></div>
+                <div><span>周三下午</span><span>朝晖院区（精英门诊）</span></div>
+                <div><span>周五上午</span><span>朝晖院区（专病门诊）</span></div>
               </div>
-              <p className="scheduleNote">
-                线上服务包不受院区限制，由团队医师开通后可随时使用。
-              </p>
+              <p className="scheduleNote">线上服务包不受院区限制，由团队医师开通后可随时使用。</p>
             </section>
 
             <button

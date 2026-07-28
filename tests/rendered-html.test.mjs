@@ -3,10 +3,9 @@ import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 test("defines the neurology pre-visit questionnaire experience", async () => {
-  const [page, layout, recommendation] = await Promise.all([
+  const [page, layout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../lib/recommendation.ts", import.meta.url), "utf8"),
   ]);
 
   assert.match(layout, /头晕头痛专病门诊 · 预诊问卷/);
@@ -16,9 +15,9 @@ test("defines the neurology pre-visit questionnaire experience", async () => {
   assert.match(page, /所有信息均严格保密/);
   assert.match(page, /rest\/v1\/rpc\/submit_questionnaire/);
   assert.match(page, /computeRecommendation/);
-  assert.match(recommendation, /套餐一/);
-  assert.match(recommendation, /套餐二/);
-  assert.match(recommendation, /套餐三/);
+  assert.match(page, /套餐一/);
+  assert.match(page, /套餐二/);
+  assert.match(page, /套餐三/);
   assert.match(page, /合并情况/);
   assert.match(page, /特殊人群/);
   assert.match(page, /施天明/);

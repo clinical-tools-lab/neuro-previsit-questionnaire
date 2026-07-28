@@ -148,25 +148,6 @@ button { -webkit-tap-highlight-color: transparent; }
 .resultHero h2 { margin: 0; font-size: 22px; }
 .resultHero p { margin: 10px 0 0; font-size: 14px; opacity: .62; }
 
-.scoreHero { display: grid; gap: 6px; justify-items: center; padding: 44px 20px; }
-.scoreNumber { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -.04em; }
-.scoreLabel { font-size: 14px; opacity: .7; }
-.scoreGrade { margin-top: 6px; padding: 7px 20px; color: #fff; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); border-radius: 99px; font-size: 16px; font-weight: 700; }
-
-.scoreBreakdownCard { margin-top: 14px; }
-.scoreBreakdown { display: grid; gap: 12px; }
-.scoreItem { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #edf0f1; }
-.scoreItem:last-child { border: 0; padding-bottom: 0; }
-.scoreItemLabel { font-size: 15px; }
-.scoreItemValue { font-size: 17px; font-weight: 700; color: var(--brand); }
-.scoreItemValue small { margin-left: 2px; font-size: 12px; font-weight: 500; color: var(--muted); }
-
-.recHeader { text-align: center; margin-bottom: 16px; }
-.recHeader h2 { margin: 10px 0 4px; font-size: 22px; }
-.recBadgeInline { display: inline-block; padding: 6px 16px; color: #fff; background: var(--coral); border-radius: 99px; font-size: 14px; font-weight: 700; }
-
-.qrIntro { margin: -6px 0 18px; color: var(--muted); font-size: 14px; line-height: 1.65; }
-
 .resultCard { box-shadow: none; }
 .resultCard h3 { margin: 0 0 16px; font-size: 16px; }
 
@@ -223,7 +204,8 @@ button { -webkit-tap-highlight-color: transparent; }
 .scheduleNote { margin: 14px 0 0; color: #87939b; font-size: 13px; line-height: 1.7; }
 
 .qrSection { margin-top: 14px; }
-.qrSection h3 { margin: 0 0 18px; font-size: 16px; }
+.qrSection h3 { margin: 0 0 12px; font-size: 16px; }
+.qrSectionNote { margin: 0 0 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .qrGrid { display: flex; justify-content: center; gap: 14px; }
 .qrGrid .qrCard { max-width: 260px; flex: 1; }
 
@@ -294,6 +276,21 @@ footer { padding: 26px 16px; text-align: center; color: #87939b; font-size: 13px
   .qrGrid { flex-direction: column; }
   .navigation { position: sticky; bottom: 10px; z-index: 3; padding: 8px; background: rgba(243,247,248,.86); border-radius: 16px; backdrop-filter: blur(12px); }
 }
+
+.scoreHero { display: grid; gap: 6px; justify-items: center; padding: 44px 20px; }
+.scoreNumber { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -.04em; }
+.scoreLabel { font-size: 14px; opacity: .7; }
+.scoreGrade { margin-top: 6px; padding: 7px 20px; color: #fff; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); border-radius: 99px; font-size: 16px; font-weight: 700; }
+.scoreBreakdownCard { margin-top: 14px; }
+.scoreBreakdownCard h3 { margin-bottom: 18px; }
+.scoreBreakdown { display: grid; gap: 16px; }
+.scoreItem { display: flex; flex-direction: column; gap: 6px; }
+.scoreItemHead { display: flex; align-items: baseline; justify-content: space-between; }
+.scoreItemLabel { font-size: 15px; font-weight: 500; }
+.scoreItemValue { font-size: 17px; font-weight: 700; color: var(--brand); }
+.scoreItemValue small { margin-left: 2px; font-size: 12px; font-weight: 500; color: var(--muted); }
+.scoreBar { height: 6px; border-radius: 99px; background: #edf0f1; overflow: hidden; }
+.scoreBarFill { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--brand), #38b2ac); transition: width .6s ease; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
