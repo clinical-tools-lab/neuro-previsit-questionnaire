@@ -74,6 +74,7 @@ const specialPopulations = [
 const treatmentOptions = [
   ["药物治疗", "药物治疗头晕头痛"],
   ["非药物治疗", "非药物方法治疗头晕头痛", "生活调理、康复理疗、心理治疗等"],
+  ["均可接受", "均可接受"],
 ];
 
 const followUpOptions = [
