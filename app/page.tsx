@@ -77,8 +77,8 @@ const treatmentOptions = [
 ];
 
 const followUpOptions = [
-  ["专病门诊定期复诊", "线下门诊（需要排队）"],
-  ["互联网平台复诊", "线上复诊（居家咨询）"],
+  ["专病门诊定期复诊", "线下门诊"],
+  ["互联网平台复诊", "线上复诊"],
   ["均可接受", "均可接受"],
 ];
 
@@ -612,11 +612,7 @@ export default function Home() {
               <>
                 <section className="resultCard recCopy">
                   <div className="recHeader">
-                    <span className="recBadgeInline">
-                      {result.recommendation.package}
-                    </span>
-                    <h2>{result.recommendation.packageName}</h2>
-                    <p className="recPrice">{result.recommendation.price}</p>
+                    <h2>诊疗建议</h2>
                   </div>
                   <p>{result.recommendation.copy}</p>
                 </section>
