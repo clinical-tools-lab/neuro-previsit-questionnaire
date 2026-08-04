@@ -1,7 +1,8 @@
 create table if not exists public.questionnaire_submissions (
   id uuid primary key,
   created_at timestamptz not null default now(),
-  name text not null check (char_length(name) between 1 and 40),
+  surname text not null check (char_length(surname) between 1 and 20),
+  outpatient_number text not null check (char_length(outpatient_number) between 1 and 30),
   gender text not null,
   age integer not null check (age between 1 and 120),
   visit_type text not null,

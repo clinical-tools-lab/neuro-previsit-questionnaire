@@ -6,7 +6,8 @@ drop table if exists public.questionnaire_submissions;
 create table public.questionnaire_submissions (
   id uuid primary key,
   created_at timestamptz not null default now(),
-  name text not null check (char_length(name) between 1 and 40),
+  surname text not null check (char_length(surname) between 1 and 20),
+  outpatient_number text not null check (char_length(outpatient_number) between 1 and 30),
   gender text not null,
   age integer not null check (age between 1 and 120),
   visit_type text not null,
@@ -34,14 +35,16 @@ set search_path = public, pg_temp
 as $$
 declare
   submission_uuid uuid := gen_random_uuid();
-  submission_name text := trim(coalesce(input->>'name', ''));
+  submission_surname text := trim(coalesce(input->>'surname', ''));
+  submission_opn text := trim(coalesce(input->>'outpatientNumber', ''));
   submission_age integer;
   symptoms_json jsonb := coalesce(input->'symptoms', '[]'::jsonb);
   conditions_json jsonb := coalesce(input->'conditions', '[]'::jsonb);
   special_json jsonb := coalesce(input->'specialPopulations', '[]'::jsonb);
 begin
   if jsonb_typeof(input) <> 'object'
-    or submission_name = ''
+    or submission_surname = ''
+    or submission_opn = ''
     or coalesce(input->>'gender', '') = ''
     or coalesce(input->>'age', '') !~ '^[0-9]+$'
     or coalesce(input->>'visitType', '') = ''
@@ -67,11 +70,12 @@ begin
   end if;
 
   insert into public.questionnaire_submissions (
-    id, created_at, name, gender, age, visit_type, course, answers
+    id, created_at, surname, outpatient_number, gender, age, visit_type, course, answers
   ) values (
     submission_uuid,
     now(),
-    left(submission_name, 40),
+    left(submission_surname, 20),
+    left(submission_opn, 30),
     input->>'gender',
     submission_age,
     input->>'visitType',

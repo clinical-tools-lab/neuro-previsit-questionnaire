@@ -6,7 +6,8 @@ set search_path = public, pg_temp
 as $$
 declare
   submission_uuid uuid := gen_random_uuid();
-  submission_name text := trim(coalesce(input->>'name', ''));
+  submission_surname text := trim(coalesce(input->>'surname', ''));
+  submission_opn text := trim(coalesce(input->>'outpatientNumber', ''));
   submission_age integer;
   symptoms_json jsonb := coalesce(input->'symptoms', '[]'::jsonb);
   conditions_json jsonb := coalesce(input->'conditions', '[]'::jsonb);
@@ -25,7 +26,8 @@ declare
   guidance_text text;
 begin
   if jsonb_typeof(input) <> 'object'
-    or submission_name = ''
+    or submission_surname = ''
+    or submission_opn = ''
     or coalesce(input->>'gender', '') = ''
     or coalesce(input->>'age', '') !~ '^[0-9]+$'
     or coalesce(input->>'visitType', '') = ''
@@ -133,11 +135,12 @@ begin
   end if;
 
   insert into public.questionnaire_submissions (
-    id, created_at, name, gender, age, visit_type, course, answers, total_score, level, tags
+    id, created_at, surname, outpatient_number, gender, age, visit_type, course, answers, total_score, level, tags
   ) values (
     submission_uuid,
     now(),
-    left(submission_name, 40),
+    left(submission_surname, 20),
+    left(submission_opn, 30),
     input->>'gender',
     submission_age,
     input->>'visitType',

@@ -27,7 +27,8 @@ const mockRecommendations: { label: string; rec: Recommendation }[] = [
   {
     label: "套餐一 · 互联网专病团队咨询 · R1",
     rec: computeRecommendation({
-      name: "张三",
+      surname: "张",
+      outpatientNumber: "MZ00123456",
       gender: "男",
       age: "35",
       visitType: "初诊",
@@ -45,7 +46,8 @@ const mockRecommendations: { label: string; rec: Recommendation }[] = [
   {
     label: "套餐二 · 生活调理包 · R3",
     rec: computeRecommendation({
-      name: "李四",
+      surname: "李",
+      outpatientNumber: "MZ00234567",
       gender: "女",
       age: "42",
       visitType: "初诊",
@@ -63,7 +65,8 @@ const mockRecommendations: { label: string; rec: Recommendation }[] = [
   {
     label: "套餐三 · 专病管理包 · R7",
     rec: computeRecommendation({
-      name: "王五",
+      surname: "王",
+      outpatientNumber: "MZ00345678",
       gender: "男",
       age: "55",
       visitType: "初诊",

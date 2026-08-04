@@ -1,5 +1,6 @@
 export type FormState = {
-  name: string;
+  surname: string;
+  outpatientNumber: string;
   gender: string;
   age: string;
   visitType: string;

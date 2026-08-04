@@ -9,7 +9,8 @@ import { type FormState, type Result, computeRecommendation } from "@/lib/recomm
 /* ------------------------------------------------------------------ */
 
 const initialForm: FormState = {
-  name: "",
+  surname: "",
+  outpatientNumber: "",
   gender: "",
   age: "",
   visitType: "",
@@ -214,7 +215,7 @@ export default function Home() {
   };
 
   const validate = () => {
-    if (step === 0 && (!form.name.trim() || !form.gender || !form.age || !form.visitType || !form.course)) {
+    if (step === 0 && (!form.surname.trim() || !form.outpatientNumber.trim() || !form.gender || !form.age || !form.visitType || !form.course)) {
       return "请完整填写基本信息";
     }
     if (step === 1 && form.symptoms.length === 0 && !form.symptomOther.trim())
@@ -323,13 +324,21 @@ export default function Home() {
               {/* Step 0: Basic Info */}
               {step === 0 ? (
                 <div className="formGrid">
-                  <label className="field fieldWide">
-                    <span>姓名</span>
+                  <label className="field">
+                    <span>姓氏</span>
                     <input
-                      value={form.name}
-                      onChange={(event) => setField("name", event.target.value)}
-                      placeholder="请输入姓名"
-                      autoComplete="name"
+                      value={form.surname}
+                      onChange={(event) => setField("surname", event.target.value)}
+                      placeholder="请输入姓氏"
+                      autoComplete="family-name"
+                    />
+                  </label>
+                  <label className="field">
+                    <span>门诊号</span>
+                    <input
+                      value={form.outpatientNumber}
+                      onChange={(event) => setField("outpatientNumber", event.target.value)}
+                      placeholder="请输入门诊号"
                     />
                   </label>
                   <label className="field">
